@@ -1,0 +1,18 @@
+<launch>
+    <arg name="use_rviz" default="false"/>
+    <arg name="lidar_type" value="$(env RPLIDAR_TYPE)" doc="lidar_type type [a1,a2,a3,s1,s2]"/>
+    <group if="$(eval arg('lidar_type') == 's2')" >
+        <node name="scan_dilute" pkg="yahboomcar_nav" type="scan_dilute.py" output="screen" respawn="true"/>
+        <include file="$(find yahboomcar_nav)/launch/library/gmapping.launch">
+            <arg name="scan_topic" default="scan_dilute"/>
+        </include>
+    </group>
+    <group unless="$(eval arg('lidar_type') == 's2')" >
+        <include file="$(find yahboomcar_nav)/launch/library/gmapping.launch">
+            <arg name="scan_topic" default="scan"/>
+        </include>
+    </group>
+    <include file="$(find yahboomcar_nav)/launch/library/move_base.launch" />
+    <include file="$(find yahboomcar_nav)/launch/library/simple.launch"/>
+    <include file="$(find yahboomcar_nav)/launch/view/view_rrt_map.launch" if="$(arg use_rviz)"/>
+</launch>

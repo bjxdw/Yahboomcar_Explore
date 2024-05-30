@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="format" default="xarco" doc="xacro ; urdf"/>
+  <arg name="robot_type" value="$(env ROBOT_TYPE)" doc="robot_type [X1,X3,X3plus,R2,X7]"/>
+
+  <arg name="gui" default="true" />
+  <arg name="run_camera" default="false"/>
+
+  <arg name='first_tb3' default="tb3_1"/>
+    
+  <!--node name="tf_footprint_base" pkg="tf"   type="static_transform_publisher"   args="0 0 0 0 0 0 base_footprint base_link 100" /-->
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg first_tb3)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg first_tb3)/map 50"/>
+
+  <group ns="$(arg first_tb3)">
+     
+    <node name="scan_dilute" pkg="yahboomcar_nav" type="scan_dilute.py" output="screen" respawn="true">
+      <param name="SubTopic" value="scan"/>
+      <param name="PubTopic" value="scan_dilute"/>
+    </node>
+    <!--include file="$(find yahboomcar_nav)/launch/library/amcl.launch">
+      <arg name="scan_topic" value="/$(arg first_tb3)/scan"/>
+      <arg name="global_frame" value="$(arg first_tb3)/map"/>
+      <arg name="base_frame" value="$(arg first_tb3)/base_footprint"/>
+      <arg name="odom_frame" value="$(arg first_tb3)/odom"/>
+    </include-->
+    <include file="$(find yahboomcar_nav)/launch/library/gmapping.launch">
+      <arg name="base_frame" value="$(arg first_tb3)/base_footprint"/>
+      <arg name="odom_frame" value="$(arg first_tb3)/odom"/>
+      <arg name="map_frame" value="$(arg first_tb3)/map"/>
+      <arg name="scan_topic" value="/$(arg first_tb3)/scan_dilute"/>
+    </include>
+    <!--node name='send_mark' pkg="yahboomcar_nav" type="send_mark.py"/-->
+    <include file="$(find yahboomcar_nav)/launch/library/move_base.launch">
+      <arg name="namespace" value="$(arg first_tb3)"/>
+      <arg name="max_vel_x" value="0.15"/>
+      <arg name="min_vel_x" value="-0.15"/>
+      <arg name="max_vel_y" value="0.15"/>
+      <arg name="min_vel_y" value="-0.15"/>
+      <arg name="max_rot_vel" value="0.7"/>
+      <arg name="min_rot_vel" value="0.7"/>
+      <arg name="max_vel_trans" value="1.0"/>
+      <arg name="min_vel_trans" value="0.00"/>
+      <arg name="max_vel_theta" value="0.4"/>
+      <arg name="min_vel_theta" value="0.1"/>
+      <arg name="latch_xy_goal_tolerance" value="false"/>
+      <arg name="yaw_goal_tolerance" value="0.2"/>
+      <arg name="xy_goal_tolerance" value="0.2"/>
+    </include>
+    
+  </group>
+
+
+  <!--node pkg="rviz" type="rviz" name="rviz" required="true"  args="-d $(find yahboomcar_nav)/rviz/navigate_single.rviz">
+
+  </node-->
+  <node pkg="rviz" type="rviz" name="rviz" required="true"
+        args="-d $(find yahboomcar_nav)/rviz/navigate_single.rviz"/>
+  <!--_$(arg first_tb3)-->
+  
+  
+</launch>

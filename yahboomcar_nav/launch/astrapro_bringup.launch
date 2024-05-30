@@ -1,0 +1,12 @@
+<launch>
+    <arg name="robot_type" value="$(env ROBOT_TYPE)" doc="robot_type [X1,X3,X3plus,R2,X7]"/>
+    <!-- 驱动模块 || driver module -->
+    <include file="$(find astra_camera)/launch/astrapro.launch"/>
+    <include file="$(find yahboomcar_bringup)/launch/bringup.launch"/>
+    <include file="$(find yahboomcar_nav)/launch/library/depthimage_to_laserscan.launch">
+        <arg name="scan_topic" default="scan"/>
+    </include>
+    <!-- Coordinate conversion -->
+    <node pkg="tf" type="static_transform_publisher" name="camera_link_to_laser"
+          args="0 0 0 0 0 0  /camera_link /laser 30" if="$(eval arg('robot_type') == 'X3')"/>
+</launch>

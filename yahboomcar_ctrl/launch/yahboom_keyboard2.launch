@@ -1,0 +1,7 @@
+<launch>
+    <node name="yahboom_keyboard" pkg="yahboomcar_ctrl" type="yahboom_keyboard.py" output="screen">
+        <param name="linear_speed_limit" type="double" value="1.0"/>
+        <param name="angular_speed_limit" type="double" value="5.0"/>
+        <param name="topic_nmae" type="string" value="tb3_2/cmd_vel"/>
+    </node>
+</launch>

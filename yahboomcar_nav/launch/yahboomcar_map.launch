@@ -1,0 +1,21 @@
+<launch>
+    <arg name="use_rviz" default="false"/>
+    <arg name="map_type" default="gmapping" doc="opt: gmapping,hector,karto,cartographer"/>
+    <arg name="lidar_type" value="$(env RPLIDAR_TYPE)" doc="lidar_type type [a1,a2,a3,s1,s2]"/>
+    <group if="$(eval arg('lidar_type') == 's2' and arg('map_type') == 'gmapping')" >
+        <node name="scan_dilute" pkg="yahboomcar_nav" type="scan_dilute.py" output="screen" respawn="true"/>
+        <include file="$(find yahboomcar_nav)/launch/library/$(arg map_type).launch">
+            <arg name="scan_topic" default="scan_dilute"/>
+        </include>
+    </group>
+    <group unless="$(eval arg('lidar_type') == 's2' and arg('map_type') == 'gmapping')" >
+        <include file="$(find yahboomcar_nav)/launch/library/$(arg map_type).launch"/>
+    </group>
+    <include file="$(find yahboomcar_nav)/launch/library/app.launch"/>
+    <group if="$(arg use_rviz)">
+        <include if="$(eval arg('map_type') != 'cartographer')"
+                 file="$(find yahboomcar_nav)/launch/view/view_map.launch"/>
+        <include if="$(eval arg('map_type') == 'cartographer')"
+                 file="$(find yahboomcar_nav)/launch/view/view_cartographer.launch"/>
+    </group>
+</launch>

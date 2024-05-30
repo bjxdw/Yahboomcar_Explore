@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="format" default="xarco" doc="xacro ; urdf"/>
+  <arg name="robot_type" value="$(env ROBOT_TYPE)" doc="robot_type [X1,X3,X3plus,R2,X7]"/>
+
+  <arg name="gui" default="true" />
+  <arg name="run_camera" default="false"/>
+
+  <arg name='first_tb3' default="tb3_1"/>
+  <arg name="second_tb3" default="tb3_2"/>
+  <arg name="first_tb3_x_pos" default=" 0.5"/>
+  <arg name="first_tb3_y_pos" default=" 2.2"/>
+  <arg name="first_tb3_z_pos" default=" 0.0"/>
+  <arg name="second_tb3_x_pos" default=" 0.5"/>
+  <arg name="second_tb3_y_pos" default=" 3.8"/>
+  <arg name="second_tb3_z_pos" default=" 0.0"/>
+
+  <!--node name="tf_footprint_base" pkg="tf"   type="static_transform_publisher"   args="0 0 0 0 0 0 base_footprint base_link 100" /-->
+  <!--node pkg="tf" type="static_transform_publisher" name="world_to_$(arg first_tb3)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg first_tb3)/map 100"/-->
+  <!--node pkg="tf" type="static_transform_publisher" name="world_to_$(arg second_tb3)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg second_tb3)/map 100"/>
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg third_tb3)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg third_tb3)/map 100"/-->
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find ros_multitb3)/worlds/turtlebot3_house_mod2.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="false"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <group ns="$(arg first_tb3)">
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find yahboomcar_description)/urdf/yahboomcar_X3.gazebo.urdf.xacro robot_name:=$(arg first_tb3)" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-urdf -model $(arg first_tb3)  
+          -x $(arg first_tb3_x_pos) -y $(arg first_tb3_y_pos) -z $(arg first_tb3_z_pos) -param robot_description" />
+    <node   name="joint_state_publisher"   pkg="joint_state_publisher"    type="joint_state_publisher" >
+      <param name="publish_frequency" type="double" value="100" />
+      <param name="tf_prefix" value="$(arg first_tb3)" />
+    </node>
+    <node  name="robot_state_publisher" pkg="robot_state_publisher"  type="state_publisher" >
+      <param name="publish_frequency" type="double" value="100" />
+      <param name="tf_prefix" value="$(arg first_tb3)" />
+    </node>
+    <node name="scan_dilute" pkg="yahboomcar_nav" type="scan_dilute.py" output="screen" respawn="true">
+      <param name="SubTopic" value="scan"/>
+      <param name="PubTopic" value="scan_dilute"/>
+    </node>
+    <include file="$(find yahboomcar_nav)/launch/library/gmapping.launch">
+      <arg name="base_frame" value="$(arg first_tb3)/base_footprint"/>
+      <arg name="odom_frame" value="$(arg first_tb3)/odom"/>
+      <arg name="map_frame" value="$(arg first_tb3)/map"/>
+      <arg name="scan_topic" value="/$(arg first_tb3)/scan"/>
+    </include>
+    <include file="$(find yahboomcar_nav)/launch/library/move_base.launch">
+      <arg name="namespace" value="$(arg first_tb3)"/>
+      <arg name="yaw_goal_tolerance" value="0.5"/>
+      <arg name="xy_goal_tolerance" value="0.5"/>
+    </include>
+    <!--include file="$(find yahboomcar_nav)/launch/library/amcl.launch">
+      <arg name="scan_topic" value="/$(arg first_tb3)/scan"/>
+      <arg name="global_frame" value="$(arg first_tb3)/map"/>
+      <arg name="base_frame" value="$(arg first_tb3)/base_footprint"/>
+      <arg name="odom_frame" value="$(arg first_tb3)/odom"/>
+    </include-->
+  </group>
+
+  <group ns="$(arg second_tb3)">
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find yahboomcar_description)/urdf/yahboomcar_X3.gazebo.urdf.xacro robot_name:=$(arg second_tb3)" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-urdf -model $(arg second_tb3)  
+          -x $(arg second_tb3_x_pos) -y $(arg second_tb3_y_pos) -z $(arg second_tb3_z_pos) -param robot_description" />
+    <node   name="joint_state_publisher"   pkg="joint_state_publisher"    type="joint_state_publisher" >
+      <param name="publish_frequency" type="double" value="100" />
+      <param name="tf_prefix" value="$(arg second_tb3)" />
+    </node>
+    <node  name="robot_state_publisher" pkg="robot_state_publisher"  type="state_publisher" >
+      <param name="publish_frequency" type="double" value="100" />
+      <param name="tf_prefix" value="$(arg second_tb3)" />
+    </node>
+    <node name="scan_dilute" pkg="yahboomcar_nav" type="scan_dilute.py" output="screen" respawn="true">
+      <param name="SubTopic" value="scan"/>
+      <param name="PubTopic" value="scan_dilute"/>
+    </node>
+    <include file="$(find yahboomcar_nav)/launch/library/gmapping.launch">
+      <arg name="base_frame" value="$(arg second_tb3)/base_footprint"/>
+      <arg name="odom_frame" value="$(arg second_tb3)/odom"/>
+      <arg name="map_frame" value="$(arg second_tb3)/map"/>
+      <arg name="scan_topic" value="/$(arg second_tb3)/scan"/>
+    </include>
+    <include file="$(find yahboomcar_nav)/launch/library/move_base.launch">
+      <arg name="namespace" value="$(arg second_tb3)"/>
+      <arg name="yaw_goal_tolerance" value="0.5"/>
+      <arg name="xy_goal_tolerance" value="0.5"/>
+    </include>
+    <!--include file="$(find yahboomcar_nav)/launch/library/amcl.launch">
+      <arg name="scan_topic" value="/$(arg second_tb3)/scan"/>
+      <arg name="global_frame" value="$(arg second_tb3)/map"/>
+      <arg name="base_frame" value="$(arg second_tb3)/base_footprint"/>
+      <arg name="odom_frame" value="$(arg second_tb3)/odom"/>
+    </include-->
+  </group>
+
+  
+
+  <include file="$(find ros_multitb3)/launch/includes/multi_yahboom_mapmerge2.launch">
+    <arg name="first_tb3" value="$(arg first_tb3)"/>
+    <arg name="second_tb3" value="$(arg second_tb3)"/>
+    <arg name="first_tb3_x_pos" default="$(arg first_tb3_x_pos)"/>
+    <arg name="first_tb3_y_pos" default="$(arg first_tb3_y_pos)"/>
+    <arg name="first_tb3_z_pos" default="$(arg first_tb3_z_pos)"/>
+    <arg name="second_tb3_x_pos" default="$(arg second_tb3_x_pos)"/>
+    <arg name="second_tb3_y_pos" default="$(arg second_tb3_y_pos)"/>
+    <arg name="second_tb3_z_pos" default="$(arg second_tb3_z_pos)"/>
+  </include>
+
+  <node pkg="rviz" type="rviz" name="rviz" required="true"
+        args="-d $(find yahboomcar_nav)/rviz/navigate_multi_real_robot.rviz"/>
+  <!--node pkg="rviz" type="rviz" name="rviz" args="-d $(find ros_multitb3)/rviz/multi_tb3_gmapping.rviz"/-->
+
+  
+  
+</launch>

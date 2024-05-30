@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="use_rviz" default="false"/>
+    <include file="$(find yahboomcar_nav)/launch/library/rtabmap.launch"/>
+    <include file="$(find yahboomcar_nav)/launch/view/view_rtabmap.launch" if="$(arg use_rviz)"/>
+</launch>

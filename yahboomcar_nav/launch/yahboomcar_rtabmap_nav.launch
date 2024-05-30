@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="use_rviz" default="false"/>
+    <!-- MarkerArray功能节点 || MarkerArray node-->
+    <node name='send_mark' pkg="yahboomcar_nav" type="send_mark.py"/>
+    <include file="$(find yahboomcar_nav)/launch/library/app.launch"/>
+    <include file="$(find yahboomcar_nav)/launch/library/move_base.launch"/>
+    <include file="$(find yahboomcar_nav)/launch/library/rtabmap_nav.launch"/>
+    <include file="$(find yahboomcar_nav)/launch/view/view_rtabmap_nav.launch" if="$(arg use_rviz)"/>
+</launch>

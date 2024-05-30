@@ -1,0 +1,26 @@
+footprint: [[0.15, 0.15], [0.15, -0.15], [-0.15, -0.15], [-0.15, 0.15]] 
+obstacle_range: 2.5
+raytrace_range: 3.0
+static_layer:
+  enabled: true
+obstacle_layer:
+  enabled: true
+  track_unknown_space: true
+  combination_method: 1
+  obstacle_range: 2.5
+  raytrace_range: 3.0
+  observation_sources: scan
+  scan: {
+    data_type: LaserScan,
+    topic: /yahboomcar/laser/scan,
+    marking: true,
+    clearing: true
+  }
+  #cost_scaling_factor and inflation_radius were now moved to the inflation_layer ns
+  inflation_layer:
+    enabled:              true
+    # exponential rate at which the obstacle cost drops off
+    cost_scaling_factor:  1.0
+  static_layer:
+    enabled:              true
+    map_topic:            "/map"
