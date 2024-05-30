@@ -62,6 +62,7 @@ Terminal 3
 The program can be executed using the following comments in three different terminals:
 
 On yahboomcar_X3:
+
      # roslaunch yahboomcar_nav laser_bringup.launch
 
 On Computer:
@@ -84,6 +85,7 @@ Terminal 3
 The program can be executed using the following comments in three different terminals:
 
 On yahboomcar_X3:
+
      # roslaunch yahboomcar_nav laser_bringup.launch
 
 On Computer:
