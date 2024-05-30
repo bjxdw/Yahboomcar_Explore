@@ -17,7 +17,7 @@ Create a new folder called "catkin_explore/src" by executing the following comme
 
     $ sudo mkdir -p ~/catkin_explore/src
     $ cd ~/catkin_explore/src/
-    $ git clone https://github.com/hikashi/multi-robot-rrt-exploration-melodic.git
+    $ git clone https://github.com/bjxdw/Yahboomcar_Explore.git
     $ cd ~/catkin_explore
     $ catkin_make
 
