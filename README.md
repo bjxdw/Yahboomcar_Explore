@@ -61,11 +61,11 @@ Terminal 3
 
 The program can be executed using the following comments in three different terminals:
 
-On yahboomcar_X3:
+###On yahboomcar_X3:
 
      # roslaunch yahboomcar_nav laser_bringup.launch
 
-On Computer:
+###On Computer:
 Terminal 1
 
      # roscore 
@@ -84,11 +84,11 @@ Terminal 3
 
 The program can be executed using the following comments in three different terminals:
 
-On yahboomcar_X3:
+###On yahboomcar_X3:
 
      # roslaunch yahboomcar_nav laser_bringup.launch
 
-On Computer:
+###On Computer:
 Terminal 1
 
      # roscore 
